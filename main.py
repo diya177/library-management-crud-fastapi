@@ -40,3 +40,42 @@ def get_book(book_id:int):
 def create_book(book:Book):
     books.append(book.model_dump())
     return {"message":"Book created successfully","book":book}
+
+#update a book
+@app.put("/books/{book_id}")
+def update_book(book_id:int, updated_book:Book):
+    for index, book in enumerate(books):
+        if book["id"]==book_id:
+            books[index]=updated_book.model_dump()
+            return{
+                "message":"Book updated successfully"
+            }
+    return{
+        "message":"Book not found"
+    }
+
+#delete a book
+@app.delete("/books/{book_id}")
+def delete_book(book_id:int):
+    for index, book in enumerate(books):
+        if book["id"]==book_id:
+            del books[index]
+            return{
+                "message":"Book deleted successfully"
+            }
+    return{
+        "message":"Book not found"
+    }
+
+#Patch route
+@app.patch("/books/{book_id}")
+def partial_update_book(book_id:int, updated_fields:Book):
+    for book in books:
+        if book["id"]==book_id:
+            book.update(updated_fields.model_dump(exclude_unset=True))
+            return{
+                "message":"Book partially updated successfully"
+            }
+    return{
+        "message":"Book not found"
+    }
